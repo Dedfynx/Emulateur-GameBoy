@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace dedOs
+namespace DedOs
 {
     Cartouche::Cartouche()
     {
@@ -71,7 +71,7 @@ namespace dedOs
     }
     void Cartouche::write(uint16_t address, uint8_t value)
     {
-        std::cout << "Pas implémenté" << std::endl;
+        std::cout << "Cartouche Write Pas implémenté" << std::endl;
         std::exit(EXIT_FAILURE);
     }
 }

@@ -1,6 +1,6 @@
 #include "Bus.hpp"
 
-namespace dedOs
+namespace DedOs
 {
     // 0x0000 - 0x3FFF : ROM Bank 0
     // 0x4000 - 0x7FFF : ROM Bank 1 - Switchable
@@ -18,6 +18,7 @@ namespace dedOs
 
     Bus::Bus()
     {
+        ram = Ram();
         cpu.loadBus(this);
     }
 
@@ -32,30 +33,101 @@ namespace dedOs
 
     uint8_t Bus::busRead(uint16_t address)
     {
-        //gere que la rom
+        // gere que la rom
 
         if (address < 0x8000)
         {
             uint8_t ret = cartouche->read(address);
             return ret;
         }
-        std::cout << "Pas implémenté" << std::endl;
-        std::exit(EXIT_FAILURE);
+        else if (address < 0xA000)
+        {
+            // Char/Map Data //VRAM
+            std::cout << "VRAM Pas implémenté" << std::endl;
+        }
+        else if (address < 0xC000)
+        {
+            return cartouche->read(address);
+        }
+        else if (address < 0xE000)
+        {
+            return ram.wram_read(address);
+        }
+        else if (address < 0xFE00)
+        {
+            return 0;
+        }
+        else if (address < 0xFEA0)
+        {
+            std::cout << "Pas implémenté addr : " << address << std::endl;
+        }
+        else if (address < 0xFF00)
+        {
+            return 0;
+        }
+        else if (address < 0xFF80)
+        {
+            // IO REGISTER
+            std::cout << "Pas implémenté addr : " << address << std::endl;
+        }
+        else if (address == 0xFFFF)
+        {
+            // CPU ENABLE REGISTER
+            std::cout << "Pas implémenté addr : " << address << std::endl;
+        }
+
+        return ram.hram_read(address);
     }
 
     void Bus::busWrite(uint16_t address, uint8_t value)
     {
-        //gere que la rom
+        // gere que la rom
         if (address < 0x8000)
         {
             cartouche->write(address, value);
             return;
         }
-        std::cout << "Pas implémenté" << std::endl;
-        std::exit(EXIT_FAILURE);
+        else if (address < 0xA000)
+        {
+            // Char/Map Data //VRAM
+            std::cout << "VRAM Pas implémenté" << std::endl;
+        }
+        else if (address < 0xC000)
+        {
+            return cartouche->write(address, value);
+        }
+        else if (address < 0xE000)
+        {
+            ram.wram_write(address, value);
+        }
+        else if (address < 0xFE00)
+        {
+            // echo ram
+        }
+        else if (address < 0xFEA0)
+        {
+            std::cout << "Pas implémenté addr : " << address << std::endl;
+        }
+        else if (address < 0xFF00)
+        {
+            // unusable reserved
+        }
+        else if (address < 0xFF80)
+        {
+            // IO REGISTER
+            std::cout << "Pas implémenté addr : " << address << std::endl;
+        }
+        else if (address == 0xFFFF)
+        {
+            cpu.setRegIE(value);
+        }
+        else
+        {
+            ram.hram_write(address, value);
+        }
     }
 
-    //16 bit operations
+    // 16 bit operations
 
     uint8_t Bus::busRead16(uint16_t address)
     {

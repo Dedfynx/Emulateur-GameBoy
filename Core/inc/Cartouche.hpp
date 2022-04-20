@@ -8,7 +8,7 @@
 
 #define CART_SIZE 0x200000
 
-namespace dedOs
+namespace DedOs
 {
     typedef struct
     {

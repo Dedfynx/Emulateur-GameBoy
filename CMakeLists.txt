@@ -13,10 +13,10 @@ include_directories(
 add_compile_options(-Wall -Wno-unknown-pragmas)
 
 #Liste des fichiers
-file(GLOB HEADER_FILES ${CMAKE_SOURCE_DIR}/inc/*.h)
+file(GLOB HEADER_FILES ${CMAKE_SOURCE_DIR}/inc/*.hpp)
 file(GLOB SRC_FILES ${CMAKE_SOURCE_DIR}/src/*.cpp)
 
-file(GLOB CORE_HEADER_FILES ${CMAKE_SOURCE_DIR}/Core/inc/*.h)
+file(GLOB CORE_HEADER_FILES ${CMAKE_SOURCE_DIR}/Core/inc/*.hpp)
 file(GLOB CORE_SRC_FILES ${CMAKE_SOURCE_DIR}/Core/src/*.cpp)
 
 

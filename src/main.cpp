@@ -7,7 +7,7 @@ int main(int argv, char **args)
             std::cout << "Usage : EmuGB.exe  rom_name" << std::endl;
             std::exit(0);
         }
-        dedOs::Emu emu{args[1]};
+        DedOs::Emu emu{args[1]};
 
         return 0;
     }

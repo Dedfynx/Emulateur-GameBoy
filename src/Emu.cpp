@@ -1,6 +1,6 @@
 #include "Emu.hpp"
 
-namespace dedOs
+namespace DedOs
 {
     Emu::Emu(std::string romPath)
     {

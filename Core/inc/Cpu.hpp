@@ -5,7 +5,7 @@
 
 #include "Common.hpp"
 
-namespace dedOs
+namespace DedOs
 {
     class Bus;
     /*
@@ -49,6 +49,9 @@ namespace dedOs
         bool isHalted() { return halted; }
         bool isRunning() { return running; }
 
+        uint8_t readRegIE();
+        void setRegIE(uint8_t val);
+
     private:
         Registre regs;
 
@@ -70,6 +73,7 @@ namespace dedOs
         bool running;
 
         bool IME;
+        uint8_t ieRegister;
 
         void fetch();
         void execute();
@@ -134,6 +138,12 @@ namespace dedOs
 
         uint16_t readReg(RegType r);
         void setReg(RegType r, uint16_t val);
+
+        //stack
+        void push(uint8_t value);
+        void push16(uint16_t value);
+        uint8_t pop();
+        uint16_t pop16();
 
         struct Instruction
         {

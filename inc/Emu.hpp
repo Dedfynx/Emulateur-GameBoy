@@ -9,7 +9,7 @@
 #include "Bus.hpp"
 #include "Cartouche.hpp"
 
-namespace dedOs
+namespace DedOs
 {
     class Emu
     {

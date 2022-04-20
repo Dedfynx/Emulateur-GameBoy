@@ -5,8 +5,9 @@
 #include "Cartouche.hpp"
 #include "Cpu.hpp"
 #include "Common.hpp"
+#include "Ram.hpp"
 
-namespace dedOs
+namespace DedOs
 {
     class Bus
     {
@@ -26,5 +27,6 @@ namespace dedOs
 
     private:
         std::shared_ptr<Cartouche> cartouche;
+        Ram ram;
     };
 }

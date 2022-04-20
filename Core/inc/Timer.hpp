@@ -2,7 +2,7 @@
 
 #include "Common.hpp"
 
-namespace dedOs{
+namespace DedOs{
     class Timer{
 
     };
