@@ -127,6 +127,8 @@ namespace DedOs
             R_PC
         };
 
+        bool is16bitReg(RegType reg){return reg>= R_AF;}
+
         enum CondType
         {
             CT_NONE,
@@ -153,6 +155,7 @@ namespace DedOs
             RegType reg1;
             RegType reg2;
             CondType cond;
+            uint8_t param;
             uint8_t cycles = 0;
         };
 
@@ -161,6 +164,8 @@ namespace DedOs
 
         bool checkCondition();
 
+        //?
+        void gotoAddr(uint16_t address, bool pushPc);
         //Operation
     #pragma region Operation
         void procNone();

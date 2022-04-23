@@ -16,7 +16,6 @@ namespace DedOs
         // Todo: Tout l'instruction set
         lookup.resize(0x100);
         lookup[0x00] = {"NOP ", procNop, A_IMP};
-
         lookup[0x01] = {"LD  ", procLd, A_R_D16, R_BC};
         lookup[0x02] = {"LD  ", procLd, A_MR_R, R_BC, R_A};
         lookup[0x03] = {"INC ", procInc, A_R, R_BC};
@@ -25,6 +24,9 @@ namespace DedOs
         lookup[0x06] = {"LD  ", procLd, A_R_D8, R_B};
         lookup[0x08] = {"LD  ", procLd, A_A16_R, R_NONE, R_SP};
         lookup[0x0A] = {"LD  ", procLd, A_R_MR, R_A, R_BC};
+        lookup[0x0B] = {"DEC ", procDec, A_R, R_BC};
+        lookup[0x0C] = {"INC ", procInc, A_R, R_C};
+        lookup[0x0D] = {"DEC ", procDec, A_R, R_C};
         lookup[0x0E] = {"LD  ", procLd, A_R_D8, R_C};
 
         lookup[0x11] = {"LD  ", procLd, A_R_D16, R_DE};
@@ -33,25 +35,39 @@ namespace DedOs
         lookup[0x14] = {"INC ", procInc, A_R, R_D};
         lookup[0x15] = {"DEC ", procDec, A_R, R_D};
         lookup[0x16] = {"LD  ", procLd, A_R_D8, R_D};
+        lookup[0x18] = {"JR  ", procJr, A_D8};
         lookup[0x1A] = {"LD  ", procLd, A_R_MR, R_A, R_DE};
+        lookup[0x1B] = {"DEC ", procDec, A_R, R_DE};
+        lookup[0x1C] = {"INC ", procInc, A_R, R_E};
+        lookup[0x1D] = {"DEC ", procDec, A_R, R_E};
         lookup[0x1E] = {"LD  ", procLd, A_R_D8, R_E};
 
+        lookup[0x20] = {"JR  ", procJr, A_D8, R_NONE, R_NONE, CT_NZ};
         lookup[0x21] = {"LD  ", procLd, A_R_D16, R_HL};
         lookup[0x22] = {"LD  ", procLd, A_HLI_R, R_HL, R_A};
         lookup[0x23] = {"INC ", procInc, A_R, R_HL};
         lookup[0x24] = {"INC ", procInc, A_R, R_H};
         lookup[0x25] = {"DEC ", procDec, A_R, R_H};
         lookup[0x26] = {"LD  ", procLd, A_R_D8, R_H};
+        lookup[0x28] = {"JR  ", procJr, A_D8, R_NONE, R_NONE, CT_Z};
         lookup[0x2A] = {"LD  ", procLd, A_R_HLI, R_A, R_HL};
+        lookup[0x2B] = {"DEC ", procDec, A_R, R_HL};
+        lookup[0x2C] = {"INC ", procInc, A_R, R_L};
+        lookup[0x2D] = {"DEC ", procDec, A_R, R_L};
         lookup[0x2E] = {"LD  ", procLd, A_R_D8, R_L};
 
+        lookup[0x30] = {"JR  ", procJr, A_D8, R_NONE, R_NONE, CT_NC};
         lookup[0x31] = {"LD  ", procLd, A_R_D16, R_SP};
         lookup[0x32] = {"LD  ", procLd, A_HLD_R, R_HL, R_A};
         lookup[0x33] = {"INC ", procInc, A_R, R_SP};
-        lookup[0x34] = {"INC ", procInc, A_MR, R_HL}; // A VERIF
-        lookup[0x35] = {"DEC ", procDec, A_MR, R_HL}; // A VERIF
+        lookup[0x34] = {"INC ", procInc, A_MR, R_HL};
+        lookup[0x35] = {"DEC ", procDec, A_MR, R_HL};
         lookup[0x36] = {"LD  ", procLd, A_MR_D8, R_HL};
+        lookup[0x38] = {"JR  ", procJr, A_D8, R_NONE, R_NONE, CT_C};
         lookup[0x3A] = {"LD  ", procLd, A_R_HLD, R_A, R_HL};
+        lookup[0x3B] = {"DEC ", procDec, A_R, R_SP};
+        lookup[0x3C] = {"INC ", procInc, A_R, R_A};
+        lookup[0x3D] = {"DEC ", procDec, A_R, R_A};
         lookup[0x3E] = {"LD  ", procLd, A_R_D8, R_A};
 
         lookup[0x40] = {"LD  ", procLd, A_R_R, R_B, R_B};
@@ -111,7 +127,7 @@ namespace DedOs
         lookup[0x73] = {"LD  ", procLd, A_MR_R, R_HL, R_E};
         lookup[0x74] = {"LD  ", procLd, A_MR_R, R_HL, R_H};
         lookup[0x75] = {"LD  ", procLd, A_MR_R, R_HL, R_L};
-        lookup[0x76] = {"HALT", procHalt}; // A VERIF
+        lookup[0x76] = {"HALT", procHalt, A_IMP}; // A VERIF
         lookup[0x77] = {"LD  ", procLd, A_R_R, R_HL, R_A};
         lookup[0x78] = {"LD  ", procLd, A_R_R, R_A, R_B};
         lookup[0x79] = {"LD  ", procLd, A_R_R, R_A, R_C};
@@ -132,16 +148,62 @@ namespace DedOs
         lookup[0xAE] = {"XOR ", procXor, A_R, R_HL}; //
         lookup[0xAF] = {"XOR ", procXor, A_R, R_A};
 #pragma endregion XOR
+        lookup[0xC0] = {"RET ", procRet, A_IMP, R_NONE, R_NONE, CT_NZ};
+        lookup[0xC1] = {"POP ", procPop, A_IMP, R_BC};
+        lookup[0xC2] = {"JP  ", procJp, A_D16, R_NONE, R_NONE, CT_NZ};
         lookup[0xC3] = {"JP  ", procJp, A_D16};
+        lookup[0xC4] = {"CALL", procCall, A_D16, R_NONE, R_NONE, CT_NZ};
+        lookup[0xC5] = {"PUSH", procPush, A_IMP, R_BC};
+        lookup[0xC7] = {"RST ", procRst, A_IMP, R_NONE, R_NONE, CT_NONE, 0x00};
+        lookup[0xC8] = {"RET ", procRet, A_IMP, R_NONE, R_NONE, CT_Z};
+        lookup[0xC9] = {"RET ", procRet, A_IMP};
+        lookup[0xCA] = {"JP  ", procJp, A_D16, R_NONE, R_NONE, CT_Z};
+        // CB rien
+        lookup[0xCC] = {"CALL", procCall, A_D16, R_NONE, R_NONE, CT_Z};
+        lookup[0xCD] = {"CALL", procCall, A_D16};
+        lookup[0xCF] = {"RST ", procRst, A_IMP, R_NONE, R_NONE, CT_NONE, 0x08};
+
+        lookup[0xD0] = {"RET ", procRet, A_IMP, R_NONE, R_NONE, CT_NC};
+        lookup[0xD1] = {"POP ", procPop, A_IMP, R_DE};
+        lookup[0xD2] = {"JP  ", procJp, A_D16, R_NONE, R_NONE, CT_NC};
+        // D3 Rien
+        lookup[0xD4] = {"CALL", procCall, A_D16, R_NONE, R_NONE, CT_NC};
+        lookup[0xD5] = {"PUSH", procPush, A_IMP, R_DE};
+        lookup[0xD7] = {"RST ", procRst, A_IMP, R_NONE, R_NONE, CT_NONE, 0x10};
+        lookup[0xD8] = {"RET ", procRet, A_IMP, R_NONE, R_NONE, CT_C};
+        lookup[0xD9] = {"RETI", procReti, A_IMP};
+        lookup[0xDA] = {"JP  ", procJp, A_D16, R_NONE, R_NONE, CT_C};
+        // DB rien
+        lookup[0xDC] = {"CALL", procCall, A_D16, R_NONE, R_NONE, CT_C};
+        // DD rien
+        lookup[0xDF] = {"RST ", procRst, A_IMP, R_NONE, R_NONE, CT_NONE, 0x18};
 
         lookup[0xE0] = {"LDH ", procLdh, A_A8_R, R_NONE, R_A};
+        lookup[0xE1] = {"POP ", procPop, A_IMP, R_HL};
         lookup[0xE2] = {"LD  ", procLd, A_MR_R, R_C, R_A};
+        // E3 rien
+        // E4 rien
+        lookup[0xE5] = {"PUSH", procPush, A_IMP, R_HL};
+        lookup[0xE7] = {"RST ", procRst, A_IMP, R_NONE, R_NONE, CT_NONE, 0x20};
+        lookup[0xE9] = {"JP  ", procJp, A_MR, R_HL};
         lookup[0xEA] = {"LD  ", procLd, A_A16_R, R_NONE, R_A};
+        // EB rien
+        // EC rien
+        // ED rien
+        lookup[0xEF] = {"RST ", procRst, A_IMP, R_NONE, R_NONE, CT_NONE, 0x28};
 
         lookup[0xF0] = {"LDH ", procLdh, A_R_A8, R_A};
+        lookup[0xF1] = {"POP ", procPop, A_IMP, R_AF};
         lookup[0xF2] = {"LD  ", procLd, A_R_MR, R_A, R_C};
         lookup[0xF3] = {"DI  ", procDi, A_IMP};
+        // F4 rien
+        lookup[0xF5] = {"PUSH", procPush, A_IMP, R_AF};
+        lookup[0xF7] = {"RST ", procRst, A_IMP, R_NONE, R_NONE, CT_NONE, 0x30};
         lookup[0xFA] = {"LD  ", procLd, A_R_A16, R_A};
+        // FC rien
+        // FD rien
+        lookup[0xFF] = {"RST ", procRst, A_IMP, R_NONE, R_NONE, CT_NONE, 0x38};
+
 #pragma endregion InstructionSet
     }
     Cpu::~Cpu()
@@ -428,19 +490,23 @@ namespace DedOs
         }
     }
 
-    void Cpu::push(uint8_t value){
+    void Cpu::push(uint8_t value)
+    {
         regs.sp--;
         bus->busWrite(regs.sp, value);
     }
-    void Cpu::push16(uint16_t value){
+    void Cpu::push16(uint16_t value)
+    {
         //à tester avec busWrite16
         push((value >> 8) & 0xFF);
         push(value & 0xFF);
     }
-    uint8_t Cpu::pop(){
+    uint8_t Cpu::pop()
+    {
         return bus->busRead(regs.sp++);
     }
-    uint16_t Cpu::pop16(){
+    uint16_t Cpu::pop16()
+    {
         uint16_t lo = pop();
         uint16_t hi = pop();
 
@@ -513,7 +579,7 @@ namespace DedOs
     {
         if (isMem)
         {
-            if (curInst.reg2 >= R_AF)
+            if (is16bitReg(curInst.reg2))
             { // If reg2 16bits
                 emuCycle(1);
                 bus->busWrite16(memDest, fetchData);
@@ -552,14 +618,67 @@ namespace DedOs
 
         emuCycle(1);
     }
-    void Cpu::procJp()
+
+    void Cpu::gotoAddr(uint16_t address, bool pushPc)
     {
         if (checkCondition())
         {
-            regs.pc = fetchData;
+            if (pushPc)
+            {
+                emuCycle(2);
+                push16(regs.pc);
+            }
+            regs.pc = address;
             // std::cout << "Jp to " << (int)regs.pc << std::endl;
             emuCycle(1);
         }
+    }
+
+    void Cpu::procJp()
+    {
+        gotoAddr(fetchData, false);
+    }
+
+    void Cpu::procJr()
+    {
+        char rel = (char)(fetchData & 0xFF);
+        uint16_t address = regs.pc + rel;
+        gotoAddr(address, false);
+    }
+
+    void Cpu::procCall()
+    {
+        gotoAddr(fetchData, true);
+    }
+
+    void Cpu::procRst()
+    {
+        gotoAddr(curInst.param, true);
+    }
+    void Cpu::procRet()
+    {
+        if (curInst.cond != CT_NONE)
+        {
+            emuCycle(1);
+        }
+        if (checkCondition())
+        {
+            uint16_t lo = pop();
+            emuCycle(1);
+
+            uint16_t hi = pop();
+            emuCycle(1);
+
+            uint16_t n = (hi << 8) | lo;
+            regs.pc = n;
+            emuCycle(1);
+        }
+    }
+
+    void Cpu::procReti()
+    {
+        IME = true;
+        procRet();
     }
 
     void Cpu::procDi() // Disable Interupt
@@ -574,15 +693,89 @@ namespace DedOs
 
     void Cpu::procInc()
     {
-        // TODO ....
+        uint16_t value = readReg(curInst.reg1) + 1;
+
+        if (is16bitReg(curInst.reg1))
+        {
+            emuCycle(1);
+        }
+
+        if (curInst.reg1 == R_HL && curInst.aMode == A_MR)
+        {
+            value = bus->busRead(readReg(R_HL)) + 1;
+            value &= 0xFF; //Pour empecher le risque d'overflow, 0x0100
+            bus->busWrite(readReg(R_HL), value);
+        }
+        else
+        {
+            setReg(curInst.reg1, value);
+            value = readReg(curInst.reg1);
+        }
+
+        if((cOpcode & 0x03) == 0x03) {
+            return;
+        }
+        setFlags(value == 0, 0 , (value & 0x0F) == 0, -1);
     }
     void Cpu::procDec()
     {
-        // TODO ...
+        uint16_t value = readReg(curInst.reg1) - 1;
+
+        if (is16bitReg(curInst.reg1))
+        {
+            emuCycle(1);
+        }
+
+        if (curInst.reg1 == R_HL && curInst.aMode == A_MR)
+        {
+            value = bus->busRead(readReg(R_HL)) - 1;
+            bus->busWrite(readReg(R_HL), value);
+        }
+        else
+        {
+            setReg(curInst.reg1, value);
+            value = readReg(curInst.reg1);
+        }
+
+        if((cOpcode & 0x0B) == 0x0B) {
+            return;
+        }
+        setFlags(value == 0, 1 , (value & 0x0F) == 0, -1);
     }
 
     void Cpu::procHalt()
     {
         // TODO ...
+    }
+
+    void Cpu::procPop()
+    {
+        uint16_t lo = pop();
+        emuCycle(1);
+
+        uint16_t hi = pop();
+        emuCycle(1);
+
+        uint16_t n = (hi << 8) | lo;
+
+        if (curInst.reg1 == R_AF)
+        {
+            setReg(curInst.reg1, n & 0xFFF0);
+            return;
+        }
+        setReg(curInst.reg1, n);
+    }
+
+    void Cpu::procPush()
+    {
+        uint16_t hi = (readReg(curInst.reg1) >> 8) & 0xFF;
+        emuCycle(1);
+        push(hi);
+
+        uint16_t lo = readReg(curInst.reg1) & 0xFF;
+        emuCycle(1);
+        push(lo);
+
+        emuCycle(1);
     }
 }
