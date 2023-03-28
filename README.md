@@ -1,4 +1,4 @@
-# Emulateur GameBoy 
+# Emulateur GameBoy (Old)
 
 ## Dependencies
 ### Already included
